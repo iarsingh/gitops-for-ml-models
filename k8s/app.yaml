@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitops-for-ml-models
+  labels:
+    app: gitops-for-ml-models
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitops-for-ml-models
+  template:
+    metadata:
+      labels:
+        app: gitops-for-ml-models
+    spec:
+      containers:
+        - name: api
+          image: gitops-for-ml-models:local
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /v1/readyz
+              port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitops-for-ml-models
+spec:
+  selector:
+    app: gitops-for-ml-models
+  ports:
+    - port: 80
+      targetPort: 8080
